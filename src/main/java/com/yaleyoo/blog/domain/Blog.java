@@ -1,17 +1,30 @@
 package com.yaleyoo.blog.domain;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.persistence.Id;
 import java.time.LocalDate;
 
+@Document(collection = "blog")
 public class Blog {
+    @Id
+    private String id;
     private String blogName;
 	private LocalDate blogTime;
 	private String blogContent;
-	private boolean blogHp;
+	private boolean blogHP;
 	private String blogKeyword;
 	private LocalDate blogUpdate;
 	private String blogDescription;
 	private String type;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public LocalDate getBlogTime() {
         return blogTime;
@@ -69,11 +82,11 @@ public class Blog {
         this.type = type;
     }
 
-    public boolean isBlogIsHp() {
-        return blogHp;
+    public boolean isBlogHP() {
+        return blogHP;
     }
 
-    public void setBlogIsHp(boolean blogIsHp) {
-        this.blogHp = blogIsHp;
+    public void setBlogHP(boolean blogHP) {
+        this.blogHP = blogHP;
     }
 }

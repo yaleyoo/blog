@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface BlogRepository extends MongoRepository<Blog, Integer>{
     Page<Blog> findAll(Pageable page);
-    Page<Blog> findBlogsByBlogHp(boolean isHp, Pageable page);
+    Page<Blog> findBlogsByBlogHP(boolean blogHP, Pageable page);
     Page<Blog> findBlogsByType(String type, Pageable page);
 }

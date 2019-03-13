@@ -1,6 +1,7 @@
 package com.yaleyoo.blog.service;
 
 import com.yaleyoo.blog.domain.Blog;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,19 @@ public class BlogServiceTests {
     @Test
     public void testBlogPage(){
         Page<Blog> blog = blogService.getBlogPage(0);
-        System.out.println(blog.getContent().size());
+        Assert.assertEquals(1,blog.getContent().size());
+    }
+
+    @Test
+    public void testBlogHomePage(){
+        Page<Blog> blog = blogService.getBlogPageByHP(0);
+        Assert.assertEquals(1,blog.getContent().size());
+    }
+
+    @Test
+    public void testBlogPageType(){
+        Page<Blog> blog = blogService.getBlogPageByType("Java", 0);
+        Assert.assertEquals(1,blog.getContent().size());
     }
 
     @Test
@@ -28,6 +41,7 @@ public class BlogServiceTests {
         Blog blog = new Blog();
         blog.setBlogName("testing2");
         blog.setBlogContent("testing............");
-//        blogService.insertBlog(blog);
+        Blog b = blogService.insertBlog(blog);
+        System.out.println();
     }
 }

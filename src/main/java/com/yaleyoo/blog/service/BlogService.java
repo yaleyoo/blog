@@ -29,14 +29,17 @@ public class BlogService {
         Sort sort = new Sort(Sort.Direction.DESC, "blogTime");
         Pageable pageable = PageRequest.of(page, DisplayConfig.BLOG_PER_HOMEPAGE, sort);
 
-        return blogRepository.findBlogsByBlogHp(true, pageable);
+        return blogRepository.findBlogsByBlogHP(true, pageable);
     }
 
     public Page<Blog> getBlogPageByType(String type, int page){
-        int size = 10;
         Sort sort = new Sort(Sort.Direction.DESC, "blogTime");
         Pageable pageable = PageRequest.of(page, DisplayConfig.BLOG_PER_PAGE, sort);
 
-        return blogRepository.findAll(pageable);
+        return blogRepository.findBlogsByType(type, pageable);
+    }
+
+    public Blog insertBlog(Blog blog){
+        return blogRepository.save(blog);
     }
 }

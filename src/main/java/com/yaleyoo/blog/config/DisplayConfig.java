@@ -3,13 +3,14 @@ package com.yaleyoo.blog.config;
 import com.yaleyoo.blog.util.PropertiesLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by steve on 13/3/19.
  */
-@Component
+@Configuration
 public class DisplayConfig implements ApplicationListener<ContextRefreshedEvent>{
     public static int BLOG_PER_HOMEPAGE;
     public static int BLOG_PER_PAGE;
