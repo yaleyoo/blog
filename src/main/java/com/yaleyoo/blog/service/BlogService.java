@@ -4,7 +4,6 @@ import com.yaleyoo.blog.config.DisplayConfig;
 import com.yaleyoo.blog.domain.Blog;
 import com.yaleyoo.blog.exception.BlogNotFoundException;
 import com.yaleyoo.blog.persistence.BlogRepository;
-import com.yaleyoo.blog.persistence.BlogTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 /**
  * Created by steve on 12/3/19.
@@ -22,6 +22,8 @@ import java.time.LocalDate;
 public class BlogService {
     @Autowired
     private BlogRepository blogRepository;
+    @Autowired
+    private BlogTypeService blogTypeService;
 
     public Page<Blog> getBlogPage(int page){
         Sort sort = new Sort(Sort.Direction.DESC, "blogTime");
@@ -52,20 +54,30 @@ public class BlogService {
 
     @Transactional
     public Blog insertBlog(Blog blog){
-        BlogTypeService blogTypeRepository = new BlogTypeService();
-        blogTypeRepository.updateBlogTypeWhileInsert(blog);
+        blogTypeService.updateBlogTypeWhileInsert(blog);
         return blogRepository.save(blog);
     }
 
-    private boolean isBlogExist(String id){
-        return blogRepository.findById(id).isPresent();
+    private Optional<Blog> getBlogById(String id){
+        return blogRepository.findById(id);
     }
 
-    public boolean updateBlog(Blog blog) throws BlogNotFoundException{
-        if (isBlogExist(blog.getId())){
-            blogRepository.save(blog);
-            return true;
-        } else throw new BlogNotFoundException();
+    @Transactional
+    public Blog updateBlog(Blog newBlog) throws BlogNotFoundException{
+        Optional<Blog> oldBlog = getBlogById(newBlog.getId());
+        if (oldBlog.isPresent()){
+            // if type is modified
+            if (oldBlog.get().getType().equals(newBlog.getType()))
+                this.updateBlogType(oldBlog.get(), newBlog);
+            return blogRepository.save(newBlog);
+        }
+        else
+            throw new BlogNotFoundException();
+    }
+
+    private void updateBlogType(Blog oldBlog,Blog newBlog){
+        blogTypeService.updateBlogTypeWhileDelete(oldBlog);
+        blogTypeService.updateBlogTypeWhileInsert(newBlog);
     }
 
 }
