@@ -1,7 +1,5 @@
 package com.yaleyoo.blog.service;
 
-import com.yaleyoo.blog.domain.BlogType;
-import com.yaleyoo.blog.persistence.BlogTypeRepository;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

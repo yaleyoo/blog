@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -22,8 +21,6 @@ import java.util.Optional;
 public class BlogService {
     @Autowired
     private BlogRepository blogRepository;
-    @Autowired
-    private BlogTypeService blogTypeService;
 
     public Page<Blog> getBlogPage(int page){
         Sort sort = new Sort(Sort.Direction.DESC, "blogTime");
@@ -52,32 +49,20 @@ public class BlogService {
                 .orElseThrow(BlogNotFoundException::new);
     }
 
-    @Transactional
-    public Blog insertBlog(Blog blog){
-        blogTypeService.updateBlogTypeWhileInsert(blog);
-        return blogRepository.save(blog);
-    }
-
     private Optional<Blog> getBlogById(String id){
         return blogRepository.findById(id);
     }
 
-    @Transactional
+    public Blog insertBlog(Blog blog){
+        blog.setCreateDate(LocalDate.now());
+        blog.setLastUpdateDate(LocalDate.now());
+        return blogRepository.save(blog);
+    }
+
     public Blog updateBlog(Blog newBlog) throws BlogNotFoundException{
-        Optional<Blog> oldBlog = getBlogById(newBlog.getId());
-        if (oldBlog.isPresent()){
-            // if type is modified
-            if (oldBlog.get().getType().equals(newBlog.getType()))
-                this.updateBlogType(oldBlog.get(), newBlog);
-            return blogRepository.save(newBlog);
-        }
-        else
-            throw new BlogNotFoundException();
+        newBlog.setLastUpdateDate(LocalDate.now());
+        return this.getBlogById(newBlog.getId())
+                .map(b -> blogRepository.save(newBlog))
+                .orElseThrow(BlogNotFoundException::new);
     }
-
-    private void updateBlogType(Blog oldBlog,Blog newBlog){
-        blogTypeService.updateBlogTypeWhileDelete(oldBlog);
-        blogTypeService.updateBlogTypeWhileInsert(newBlog);
-    }
-
 }

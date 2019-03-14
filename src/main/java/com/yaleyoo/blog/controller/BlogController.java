@@ -1,7 +1,6 @@
 package com.yaleyoo.blog.controller;
 
 import com.yaleyoo.blog.domain.Blog;
-import com.yaleyoo.blog.domain.User;
 import com.yaleyoo.blog.exception.BlogNotFoundException;
 import com.yaleyoo.blog.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +33,13 @@ public class BlogController {
     @RequestMapping(value = "/blog", method = RequestMethod.POST)
     public Blog insertBlog(@RequestBody Blog blog){
 
-        blog.setCreateDate(LocalDate.now());
-        blog.setLastUpdateDate(LocalDate.now());
-//        return blogService.insertBlog(new Blog(blogName, LocalDate.now(), blogContent, blogHP, blogKeyWord,
-//                LocalDate.now(), blogDescription, blogType, isPrivate));
         return blogService.insertBlog(blog);
     }
 
 
-    @RequestMapping(value = "/blog/{year}/{month}/{day}/{blogName}", method = RequestMethod.PUT)
-    public Blog updateBlog(@PathVariable int year, @PathVariable int month, @PathVariable int day,
-                              @PathVariable String blogName, String blogId, String blogContent,
-                              boolean blogHP, String blogKeyWord, String blogDescription,
-                              String blogType, boolean isPrivate) throws BlogNotFoundException{
+    @RequestMapping(value = "/blog", method = RequestMethod.PUT)
+    public Blog updateBlog(@RequestBody Blog blog) throws BlogNotFoundException{
 
-        return blogService.updateBlog(
-                new Blog(blogId, blogName, LocalDate.of(year, month, day), blogContent, blogHP,
-                        blogKeyWord, LocalDate.now(), blogDescription, blogType, isPrivate));
+        return blogService.updateBlog(blog);
     }
 }
