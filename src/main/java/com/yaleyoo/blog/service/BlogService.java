@@ -65,4 +65,8 @@ public class BlogService {
                 .map(b -> blogRepository.save(newBlog))
                 .orElseThrow(BlogNotFoundException::new);
     }
+
+    public long deleteBlog(LocalDate localDate, String blogName){
+        return blogRepository.deleteByBlogNameAndAndCreateDate(blogName, localDate);
+    }
 }

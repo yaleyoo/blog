@@ -5,30 +5,30 @@ package com.yaleyoo.blog.exception;
  */
 
 public class ErrorResponse {
-    private String message;
-    private String details;
+    private String errMessage;
+    private String errDetails;
 
     public ErrorResponse() {
     }
 
     public ErrorResponse(String message, String details) {
-        this.message = message;
-        this.details = details;
+        this.errMessage = message;
+        this.errDetails = details;
     }
 
     public String getMessage() {
-        return message;
+        return errMessage;
     }
 
     public void setMessage(String message) {
-        this.message = message;
+        this.errMessage = message;
     }
 
     public String getDetails() {
-        return details;
+        return errDetails;
     }
 
     public void setDetails(String details) {
-        this.details = details;
+        this.errDetails = details;
     }
 }

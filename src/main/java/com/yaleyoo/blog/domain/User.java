@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,8 +19,14 @@ import java.util.List;
 public class User implements UserDetails{
     @Id
     private String id;
+    @NotNull(message = "Username is mandatory")
     private String username;
+    @NotNull(message = "Password is mandatory")
     private String password;
+
+    public User(){
+
+    }
 
     public User(String id, String username, String password) {
         this.id = id;
@@ -41,7 +48,7 @@ public class User implements UserDetails{
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
@@ -51,7 +58,7 @@ public class User implements UserDetails{
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override

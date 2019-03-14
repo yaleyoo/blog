@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 /**
  * Created by steve on 13/3/19.
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 public class Blog {
     @Id
     private String id;
+    @Size(max = 100)
     private String blogName;
 	private LocalDate createDate;
 	@Transient
@@ -22,9 +24,12 @@ public class Blog {
 	private int createDay;
 	private String blogContent;
 	private boolean blogHP;
+	@Size(max = 100)
 	private String blogKeyword;
 	private LocalDate lastUpdateDate;
+    @Size(max = 300)
 	private String blogDescription;
+    @Size(max = 20)
 	private String type;
 	private boolean isPrivate;
 

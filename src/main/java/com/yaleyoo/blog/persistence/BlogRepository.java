@@ -19,4 +19,5 @@ public interface BlogRepository extends MongoRepository<Blog, Integer>{
     Page<Blog> findBlogsByType(String type, Pageable page);
     Optional<Blog> findByBlogNameAndCreateDate(String blogName, LocalDate createDate);
     Optional<Blog> findById(String id);
+    long deleteByBlogNameAndAndCreateDate(String blogName, LocalDate createDate);
 }
