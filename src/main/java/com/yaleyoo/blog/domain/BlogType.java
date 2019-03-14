@@ -4,13 +4,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.util.List;
-
+/**
+ * Created by steve on 13/3/19.
+ */
 @Document(collection = "blogType")
 public class BlogType {
     @Id
     private String id;
     private String typeName;
-    private List<String> blogList;
+    private List<BlogDTO> blogList;
+
+    public BlogType(String id, String typeName, List<BlogDTO> blogList) {
+        this.id = id;
+        this.typeName = typeName;
+        this.blogList = blogList;
+    }
 
     public String getId() {
         return id;
@@ -28,11 +36,11 @@ public class BlogType {
         this.typeName = typeName;
     }
 
-    public List<String> getBlogList() {
+    public List<BlogDTO> getBlogList() {
         return blogList;
     }
 
-    public void setBlogList(List<String> blogList) {
+    public void setBlogList(List<BlogDTO> blogList) {
         this.blogList = blogList;
     }
 }

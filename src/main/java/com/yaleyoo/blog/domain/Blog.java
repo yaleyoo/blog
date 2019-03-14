@@ -1,22 +1,121 @@
 package com.yaleyoo.blog.domain;
 
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.time.LocalDate;
-
+/**
+ * Created by steve on 13/3/19.
+ */
 @Document(collection = "blog")
 public class Blog {
     @Id
     private String id;
     private String blogName;
-	private LocalDate blogTime;
+	private LocalDate createDate;
+	@Transient
+	private int createYear;
+    @Transient
+	private int createMonth;
+    @Transient
+	private int createDay;
 	private String blogContent;
 	private boolean blogHP;
 	private String blogKeyword;
-	private LocalDate blogUpdate;
+	private LocalDate lastUpdateDate;
 	private String blogDescription;
 	private String type;
+	private boolean isPrivate;
+
+	public Blog(){
+
+    }
+
+    /**
+     * Full parameters constructor, used for generating JSON.
+     * @param id
+     * @param blogName
+     * @param createDate
+     * @param createYear
+     * @param createMonth
+     * @param createDay
+     * @param blogContent
+     * @param blogHP
+     * @param blogKeyword
+     * @param lastUpdateDate
+     * @param blogDescription
+     * @param type
+     */
+    public Blog(String id, String blogName, LocalDate createDate, int createYear, int createMonth, int createDay, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type, boolean isPrivate) {
+        this.id = id;
+        this.blogName = blogName;
+        this.createDate = createDate;
+        this.createYear = createYear;
+        this.createMonth = createMonth;
+        this.createDay = createDay;
+        this.blogContent = blogContent;
+        this.blogHP = blogHP;
+        this.blogKeyword = blogKeyword;
+        this.lastUpdateDate = lastUpdateDate;
+        this.blogDescription = blogDescription;
+        this.type = type;
+        this.isPrivate = isPrivate;
+    }
+
+    /**
+     * Constructor with id, used for update blog or response
+     * @param id
+     * @param blogName
+     * @param createDate
+     * @param blogContent
+     * @param blogHP
+     * @param blogKeyword
+     * @param lastUpdateDate
+     * @param blogDescription
+     * @param type
+     */
+    public Blog(String id, String blogName, LocalDate createDate, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type, boolean isPrivate) {
+        this.id = id;
+        this.blogName = blogName;
+        this.createDate = createDate;
+        this.createYear = createDate.getYear();
+        this.createMonth = createDate.getMonthValue();
+        this.createDay = createDate.getDayOfMonth();
+        this.blogContent = blogContent;
+        this.blogHP = blogHP;
+        this.blogKeyword = blogKeyword;
+        this.lastUpdateDate = lastUpdateDate;
+        this.blogDescription = blogDescription;
+        this.type = type;
+        this.isPrivate = isPrivate;
+    }
+
+    /**
+     * Constructor without id, used for insert blog.
+     * @param blogName
+     * @param createDate
+     * @param blogContent
+     * @param blogHP
+     * @param blogKeyword
+     * @param lastUpdateDate
+     * @param blogDescription
+     * @param type
+     */
+    public Blog(String blogName, LocalDate createDate, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type,boolean isPrivate) {
+        this.blogName = blogName;
+        this.createDate = createDate;
+        this.createYear = createDate.getYear();
+        this.createMonth = createDate.getMonthValue();
+        this.createDay = createDate.getDayOfMonth();
+        this.blogContent = blogContent;
+        this.blogHP = blogHP;
+        this.blogKeyword = blogKeyword;
+        this.lastUpdateDate = lastUpdateDate;
+        this.blogDescription = blogDescription;
+        this.type = type;
+        this.isPrivate = isPrivate;
+    }
 
     public String getId() {
         return id;
@@ -24,14 +123,6 @@ public class Blog {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public LocalDate getBlogTime() {
-        return blogTime;
-    }
-
-    public void setBlogTime(LocalDate blogTime) {
-        this.blogTime = blogTime;
     }
 
     public String getBlogContent() {
@@ -58,14 +149,6 @@ public class Blog {
         this.blogKeyword = blogKeyword;
     }
 
-    public LocalDate getBlogUpdate() {
-        return blogUpdate;
-    }
-
-    public void setBlogUpdate(LocalDate blogUpdate) {
-        this.blogUpdate = blogUpdate;
-    }
-
     public String getBlogDescription() {
         return blogDescription;
     }
@@ -88,5 +171,41 @@ public class Blog {
 
     public void setBlogHP(boolean blogHP) {
         this.blogHP = blogHP;
+    }
+
+    public LocalDate getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(LocalDate createDate) {
+        this.createDate = createDate;
+    }
+
+    public LocalDate getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(LocalDate lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public int getCreateYear() {
+        return this.createDate.getYear();
+    }
+
+    public int getCreateMonth() {
+        return this.createDate.getMonthValue();
+    }
+
+    public int getCreateDay() {
+        return this.createDate.getDayOfMonth();
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 }

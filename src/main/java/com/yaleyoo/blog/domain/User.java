@@ -21,6 +21,12 @@ public class User implements UserDetails{
     private String username;
     private String password;
 
+    public User(String id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
     public String getId() {
         return id;
     }
@@ -60,6 +66,7 @@ public class User implements UserDetails{
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
+        // assume the users are all manager, as visitor's behavior would not require authentication.
         authorities.add(new SimpleGrantedAuthority("MANAGER"));
         return authorities;
     }
