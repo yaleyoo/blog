@@ -7,7 +7,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by steve on 12/3/19.
@@ -17,6 +21,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class BlogServiceTests {
     @Autowired
     private BlogService blogService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+
 
     @Test
     public void testBlogPage(){
@@ -42,6 +49,16 @@ public class BlogServiceTests {
         blog.setBlogName("testing2");
         blog.setBlogContent("testing............");
         Blog b = blogService.insertBlog(blog);
+        System.out.println();
+    }
+
+    @Test
+    public void testRedis(){
+        Map<String, Integer> map = new HashMap<>();
+        map.put("Java", 1);
+        redisTemplate.opsForValue().set("testing", map);
+
+        Map a = redisTemplate.opsForHash().entries("typeStatistic::com.yaleyoo.blog.controller.BlogControllergetTypes");
         System.out.println();
     }
 }

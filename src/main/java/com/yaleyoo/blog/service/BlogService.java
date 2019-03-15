@@ -9,9 +9,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -21,6 +27,9 @@ import java.util.Optional;
 public class BlogService {
     @Autowired
     private BlogRepository blogRepository;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     public Page<Blog> getBlogPage(int page){
         Sort sort = new Sort(Sort.Direction.DESC, "blogTime");
@@ -56,7 +65,10 @@ public class BlogService {
     public Blog insertBlog(Blog blog){
         blog.setCreateDate(LocalDate.now());
         blog.setLastUpdateDate(LocalDate.now());
-        return blogRepository.save(blog);
+        HashOperations<String, String, Integer> hashOp = stringRedisTemplate.opsForHash();
+        Object map = hashOp.entries("typeStatistic::com.yaleyoo.blog.controller.BlogControllergetTypes");
+        return null;
+//        return blogRepository.save(blog);
     }
 
     public Blog updateBlog(Blog newBlog) throws BlogNotFoundException{
@@ -68,5 +80,16 @@ public class BlogService {
 
     public long deleteBlog(LocalDate localDate, String blogName){
         return blogRepository.deleteByBlogNameAndAndCreateDate(blogName, localDate);
+    }
+
+    public HashMap<String, Integer> typeStatistic(){
+        HashMap<String, Integer> statistic = new HashMap<>();
+        List<Blog> blogList = blogRepository.findAll();
+//        blogList.stream().map(
+//                blog -> statistic.put(blog.getType(), statistic.getOrDefault(blog.getType(), 0) + 1));
+        for (Blog b : blogList){
+            statistic.put(b.getType(), statistic.getOrDefault(b.getType(), 0) + 1);
+        }
+        return statistic;
     }
 }
