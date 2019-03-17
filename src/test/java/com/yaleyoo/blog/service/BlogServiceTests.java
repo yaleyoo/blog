@@ -1,6 +1,7 @@
 package com.yaleyoo.blog.service;
 
 import com.yaleyoo.blog.domain.Blog;
+import com.yaleyoo.blog.exception.CacheUpdateException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +46,7 @@ public class BlogServiceTests {
     }
 
     @Test
-    public void testAddBlog(){
+    public void testAddBlog() throws CacheUpdateException {
         Blog blog = new Blog();
         blog.setBlogName("testing2");
         blog.setBlogContent("testing............");
@@ -58,7 +60,11 @@ public class BlogServiceTests {
         map.put("Java", 1);
         redisTemplate.opsForValue().set("testing", map);
 
-        Map a = redisTemplate.opsForHash().entries("typeStatistic::com.yaleyoo.blog.controller.BlogControllergetTypes");
+        Object o = redisTemplate.opsForValue().get("testing");
         System.out.println();
+    }
+
+    @Test
+    public void testDelete(){
     }
 }
