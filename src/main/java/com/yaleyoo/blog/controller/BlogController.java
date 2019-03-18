@@ -6,6 +6,7 @@ import com.yaleyoo.blog.exception.CacheUpdateException;
 import com.yaleyoo.blog.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +51,7 @@ public class BlogController {
         return blogService.updateBlog(blog);
     }
 
-    @PreAuthorize(value = "hasRole('MANAGER')")
+    @Secured({"ROLE_KEKE"})
     @RequestMapping(value = "/blog/{year}/{month}/{day}/{blogName}", method = RequestMethod.DELETE)
     String deleteBlog(@PathVariable int year, @PathVariable int month, @PathVariable int day,
                         @PathVariable String blogName) throws CacheUpdateException, BlogNotFoundException {
