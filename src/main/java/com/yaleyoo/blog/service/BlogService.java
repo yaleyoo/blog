@@ -5,12 +5,14 @@ import com.yaleyoo.blog.domain.Blog;
 import com.yaleyoo.blog.exception.BlogNotFoundException;
 import com.yaleyoo.blog.exception.CacheUpdateException;
 import com.yaleyoo.blog.persistence.BlogRepository;
+import com.yaleyoo.blog.response.SimpleHttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,68 +31,92 @@ public class BlogService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    public Page<Blog> getBlogPage(int page){
+    public ResponseEntity getBlogPage(int page){
         Sort sort = new Sort(Sort.Direction.DESC, "blogTime");
         Pageable pageable = PageRequest.of(page, DisplayConfig.BLOG_PER_PAGE, sort);
 
-        return blogRepository.findByIsPrivate(pageable, false);
+        return new ResponseEntity(
+                new SimpleHttpResult(blogRepository.findByIsPrivate(pageable, false).getContent()),
+                HttpStatus.OK);
     }
 
-    public Page<Blog> getBlogPageByHP(int page){
+    public ResponseEntity getBlogPageByHP(int page){
         Sort sort = new Sort(Sort.Direction.DESC, "blogTime");
         Pageable pageable = PageRequest.of(page, DisplayConfig.BLOG_PER_HOMEPAGE, sort);
 
-        return blogRepository.findBlogsByBlogHP(true, pageable);
+        return new ResponseEntity(
+                new SimpleHttpResult(blogRepository.findBlogsByBlogHP(true, pageable).getContent()),
+                HttpStatus.OK);
     }
 
-    public Page<Blog> getBlogPageByType(String type, int page){
+    public ResponseEntity getBlogPageByType(String type, int page){
         Sort sort = new Sort(Sort.Direction.DESC, "blogTime");
         Pageable pageable = PageRequest.of(page, DisplayConfig.BLOG_PER_PAGE, sort);
 
-        return blogRepository.findBlogsByType(type, pageable);
+        return new ResponseEntity(
+                new SimpleHttpResult(blogRepository.findBlogsByType(type, pageable).getContent()),
+                HttpStatus.OK);
     }
 
 
-    public Blog getBlog(LocalDate createDate, String blogName) throws BlogNotFoundException{
-        return blogRepository.findByBlogNameAndCreateDate(blogName, createDate)
+    public ResponseEntity getBlog(LocalDate createDate, String blogName) throws BlogNotFoundException{
+        Blog blog = blogRepository.findByBlogNameAndCreateDate(blogName, createDate)
                 .orElseThrow(() -> new BlogNotFoundException(blogName));
+        return new ResponseEntity(
+                new SimpleHttpResult(blog),
+                HttpStatus.OK);
     }
 
-    private Optional<Blog> getBlogById(String id){
-        return blogRepository.findById(id);
+    private ResponseEntity getBlogById(String id) throws BlogNotFoundException{
+        Blog blog = blogRepository.findById(id)
+                .orElseThrow(() -> new BlogNotFoundException(id));
+        return new ResponseEntity(
+                new SimpleHttpResult(blog),
+                HttpStatus.OK);
     }
 
-    public Blog insertBlog(Blog blog) throws CacheUpdateException{
+    public ResponseEntity insertBlog(Blog blog) throws CacheUpdateException{
         blog.setCreateDate(LocalDate.now());
         blog.setLastUpdateDate(LocalDate.now());
 
         if (updateCacheWhileInsert(blog.getType()))
-            return blogRepository.save(blog);
+            return new ResponseEntity(
+                    new SimpleHttpResult(blogRepository.save(blog)),
+                    HttpStatus.OK);
         else throw new CacheUpdateException();
     }
 
-    public Blog updateBlog(Blog newBlog) throws BlogNotFoundException, CacheUpdateException{
-        Optional<Blog> blogOptional = this.getBlogById(newBlog.getId());
+    public ResponseEntity updateBlog(Blog newBlog) throws BlogNotFoundException, CacheUpdateException{
+        Optional<Blog> blogOptional = blogRepository.findById(newBlog.getId());
         if (blogOptional.isPresent()){
             if (updateCacheWhileUpdate(blogOptional.get().getType(), newBlog.getType())){
                 newBlog.setCreateDate(blogOptional.get().getCreateDate());
                 newBlog.setLastUpdateDate(LocalDate.now());
                 Blog b = blogRepository.save(newBlog);
-                return b;
+                return new ResponseEntity(
+                        new SimpleHttpResult(b),
+                        HttpStatus.OK);
             }
             else throw new CacheUpdateException();
         }
         else throw new BlogNotFoundException(newBlog.getBlogName());
     }
 
-    public void deleteBlog(LocalDate localDate, String blogName) throws BlogNotFoundException{
+    public ResponseEntity deleteBlog(LocalDate localDate, String blogName) throws BlogNotFoundException, CacheUpdateException{
 
-        Blog blog = this.getBlog(localDate, blogName);
-        updateCacheWhileDelete(blog.getType());
-        blogRepository.delete(blog);
+        Blog blog = blogRepository.findByBlogNameAndCreateDate(blogName, localDate)
+                .orElseThrow(() -> new BlogNotFoundException(blogName));
+        if (updateCacheWhileDelete(blog.getType())) {
+            blogRepository.delete(blog);
+            return new ResponseEntity(
+                    new SimpleHttpResult(),
+                    HttpStatus.OK);
+        }
+        else
+            throw new CacheUpdateException();
     }
 
-    public HashMap<String, Integer> typeStatistic(){
+    public ResponseEntity typeStatistic(){
         HashMap<String, Integer> statistic = new HashMap<>();
         List<Blog> blogList = blogRepository.findAll();
 //        blogList.stream().map(
@@ -98,10 +124,13 @@ public class BlogService {
         for (Blog b : blogList){
             statistic.put(b.getType(), statistic.getOrDefault(b.getType(), 0) + 1);
         }
-        return statistic;
+        // cache into redis
+        statistic.forEach((k, v) -> redisTemplate.opsForValue().setIfAbsent(k, v.toString()));
+        return new ResponseEntity(
+                new SimpleHttpResult(statistic),
+                HttpStatus.OK);
     }
-    /*=== Update Cache ===*/
-
+    /** Update Cache **/
     private boolean updateCacheWhileInsert(String typeName){
         boolean isUpdated;
         if (isPresent(typeName)) {

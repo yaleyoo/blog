@@ -3,7 +3,10 @@ package com.yaleyoo.blog.service;
 import com.yaleyoo.blog.domain.User;
 import com.yaleyoo.blog.exception.UserNotFoundException;
 import com.yaleyoo.blog.persistence.UserRepository;
+import com.yaleyoo.blog.response.SimpleHttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,28 +23,38 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<User> getAllUser(){
-        return userRepository.findAll();
+    public ResponseEntity getAllUser(){
+        return new ResponseEntity(
+                new SimpleHttpResult(userRepository.findAll()),
+                HttpStatus.OK);
     }
 
-    public User saveUser(User user){
-        return userRepository.save(user);
+    public ResponseEntity saveUser(User user){
+        return new ResponseEntity(
+                new SimpleHttpResult(userRepository.save(user)),
+                HttpStatus.OK);
     }
 
-    public long deleteUserByUsernameAndPassword(String username, String password){
-        return userRepository.deleteByUsernameAndPassword(username, password);
+    public ResponseEntity deleteUserByUsernameAndPassword(String username, String password) throws UserNotFoundException{
+        long deleted = userRepository.deleteByUsernameAndPassword(username, password);
+
+        if (deleted == 0) throw new UserNotFoundException();
+
+        return new ResponseEntity(
+                new SimpleHttpResult(true, deleted + " users are deleted."),
+                HttpStatus.OK);
     }
 
-    public Optional<User> updateUser(User user) throws UserNotFoundException{
-        if (userRepository.findByUsername(user.getUsername()).getId()!=null){
-            return Optional.of(userRepository.save(user));
-        }
-        else
-            return Optional.empty();
+    public ResponseEntity updateUser(User user) throws UserNotFoundException{
+        User u = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new UserNotFoundException());
+        return new ResponseEntity(
+                new SimpleHttpResult(u),
+                HttpStatus.OK);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).get();
     }
 }

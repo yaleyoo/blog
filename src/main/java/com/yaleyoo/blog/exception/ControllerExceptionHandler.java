@@ -1,5 +1,6 @@
 package com.yaleyoo.blog.exception;
 
+import com.yaleyoo.blog.response.SimpleHttpResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,9 +19,9 @@ public class ControllerExceptionHandler {
      * @return
      */
     @ExceptionHandler(BlogNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(Exception exception, WebRequest request){
+    public ResponseEntity<SimpleHttpResult> handleBadRequest(Exception exception, WebRequest request){
         return new ResponseEntity<>(
-                new ErrorResponse(exception.getMessage(), request.getDescription(false)),
+                new SimpleHttpResult(false, exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 }
