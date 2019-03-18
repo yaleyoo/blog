@@ -51,7 +51,7 @@ public class BlogController {
         return blogService.updateBlog(blog);
     }
 
-    @Secured({"ROLE_KEKE"})
+    @PreAuthorize(value = "hasRole('MANAGER')")
     @RequestMapping(value = "/blog/{year}/{month}/{day}/{blogName}", method = RequestMethod.DELETE)
     String deleteBlog(@PathVariable int year, @PathVariable int month, @PathVariable int day,
                         @PathVariable String blogName) throws CacheUpdateException, BlogNotFoundException {

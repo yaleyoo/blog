@@ -40,7 +40,7 @@ public class BlogControllerTests {
     }
 
     @Test
-    @WithMockUser(username = "fdfd", roles = {"USER"})
+    @WithMockUser(username = "fdfd", roles = {"MANAGER"})
     public void testAdd() throws Exception{
         Blog b = new Blog();
         b.setBlogContent("fdsfsdfsdfsdfds");
