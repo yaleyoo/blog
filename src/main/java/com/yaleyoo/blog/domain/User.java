@@ -74,7 +74,7 @@ public class User implements UserDetails{
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         // assume the users are all manager, as visitor's behavior would not require authentication.
-        authorities.add(new SimpleGrantedAuthority("MANAGER"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
         return authorities;
     }
 

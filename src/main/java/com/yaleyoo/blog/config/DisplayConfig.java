@@ -1,5 +1,6 @@
 package com.yaleyoo.blog.config;
 
+import com.yaleyoo.blog.util.BlogProperties;
 import com.yaleyoo.blog.util.PropertiesLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -15,18 +16,14 @@ public class DisplayConfig implements ApplicationListener<ContextRefreshedEvent>
     public static int BLOG_PER_HOMEPAGE;
     public static int BLOG_PER_PAGE;
 
-    final private PropertiesLoader propertiesLoader;
-
     @Autowired
-    public DisplayConfig(PropertiesLoader propertiesLoader) {
-        this.propertiesLoader = propertiesLoader;
-    }
+    private BlogProperties blogProperties;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
-            propertiesLoader.loadValue("per-page").ifPresent(x -> BLOG_PER_PAGE = Integer.valueOf(x));
-            propertiesLoader.loadValue("per-homepage").ifPresent(x -> BLOG_PER_HOMEPAGE = Integer.valueOf(x));
+            BLOG_PER_PAGE = Integer.parseInt(blogProperties.getPerPage());
+            BLOG_PER_HOMEPAGE = Integer.parseInt(blogProperties.getPerHomepage());
         } catch (NumberFormatException e){
             System.out.println("[ERROR] - 'per-page/per-homepage' setting is wrong in application.properties.");
             e.printStackTrace();

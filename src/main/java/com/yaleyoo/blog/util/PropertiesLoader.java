@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Created by steve on 13/3/19.
  */
-@Component
+//@Component
 public class PropertiesLoader {
     private final String PATH = "application.properties";
     private static final String CONFIG_NAME = "yaleyoo.blog.";
