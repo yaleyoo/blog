@@ -32,6 +32,7 @@ public class Blog {
     @Size(max = 20)
 	private String type;
 	private boolean isPrivate;
+	private String imgUrl;
 
 	public Blog(){
 
@@ -52,7 +53,7 @@ public class Blog {
      * @param blogDescription
      * @param type
      */
-    public Blog(String id, String blogName, LocalDate createDate, int createYear, int createMonth, int createDay, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type, boolean isPrivate) {
+    public Blog(String id, String blogName, LocalDate createDate, int createYear, int createMonth, int createDay, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type, boolean isPrivate, String imgUrl) {
         this.id = id;
         this.blogName = blogName;
         this.createDate = createDate;
@@ -66,10 +67,11 @@ public class Blog {
         this.blogDescription = blogDescription;
         this.type = type;
         this.isPrivate = isPrivate;
+        this.imgUrl = imgUrl;
     }
 
     /**
-     * Constructor with id, used for update blog or response
+     * Constructor with id, used for update blog or response. But no year/month/day
      * @param id
      * @param blogName
      * @param createDate
@@ -79,8 +81,9 @@ public class Blog {
      * @param lastUpdateDate
      * @param blogDescription
      * @param type
+     * @param imgUrl
      */
-    public Blog(String id, String blogName, LocalDate createDate, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type, boolean isPrivate) {
+    public Blog(String id, String blogName, LocalDate createDate, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type, boolean isPrivate, String imgUrl) {
         this.id = id;
         this.blogName = blogName;
         this.createDate = createDate;
@@ -94,6 +97,7 @@ public class Blog {
         this.blogDescription = blogDescription;
         this.type = type;
         this.isPrivate = isPrivate;
+        this.imgUrl = imgUrl;
     }
 
     /**
@@ -106,8 +110,9 @@ public class Blog {
      * @param lastUpdateDate
      * @param blogDescription
      * @param type
+     * @param imgUrl
      */
-    public Blog(String blogName, LocalDate createDate, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type,boolean isPrivate) {
+    public Blog(String blogName, LocalDate createDate, String blogContent, boolean blogHP, String blogKeyword, LocalDate lastUpdateDate, String blogDescription, String type,boolean isPrivate, String imgUrl) {
         this.blogName = blogName;
         this.createDate = createDate;
         this.createYear = createDate.getYear();
@@ -120,6 +125,7 @@ public class Blog {
         this.blogDescription = blogDescription;
         this.type = type;
         this.isPrivate = isPrivate;
+        this.imgUrl = imgUrl;
     }
 
     public String getId() {
