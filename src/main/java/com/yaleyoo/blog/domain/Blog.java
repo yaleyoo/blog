@@ -219,4 +219,12 @@ public class Blog {
     public void setPrivate(boolean aPrivate) {
         isPrivate = aPrivate;
     }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 }
